@@ -3,7 +3,35 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleCadDms.AutoCad.Addin", "src\SimpleCadDms.AutoCad.Addin\SimpleCadDms.AutoCad.Addin.csproj", "{19B690E3-3CD0-4515-A3A0-4C97F294601E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleCadDms.SolidWorks.Addin", "src\SimpleCadDms.SolidWorks.Addin\SimpleCadDms.SolidWorks.Addin.csproj", "{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19B690E3-3CD0-4515-A3A0-4C97F294601E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19B690E3-3CD0-4515-A3A0-4C97F294601E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19B690E3-3CD0-4515-A3A0-4C97F294601E}.Debug|x64.ActiveCfg = Debug|x64
+		{19B690E3-3CD0-4515-A3A0-4C97F294601E}.Debug|x64.Build.0 = Debug|x64
+		{19B690E3-3CD0-4515-A3A0-4C97F294601E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19B690E3-3CD0-4515-A3A0-4C97F294601E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19B690E3-3CD0-4515-A3A0-4C97F294601E}.Release|x64.ActiveCfg = Release|x64
+		{19B690E3-3CD0-4515-A3A0-4C97F294601E}.Release|x64.Build.0 = Release|x64
+		{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}.Debug|x64.ActiveCfg = Debug|x64
+		{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}.Debug|x64.Build.0 = Debug|x64
+		{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}.Release|x64.ActiveCfg = Release|x64
+		{7F70DA4A-EAA7-40BC-9BE0-89F6A85E095A}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
