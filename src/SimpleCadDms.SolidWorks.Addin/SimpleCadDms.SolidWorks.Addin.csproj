@@ -78,8 +78,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandState.cs" />
     <Compile Include="SolidWorksAddin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CommandManagerHandler.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Images\IconList_20.png" />
+    <EmbeddedResource Include="Images\IconList_32.png" />
+    <EmbeddedResource Include="Images\IconList_40.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

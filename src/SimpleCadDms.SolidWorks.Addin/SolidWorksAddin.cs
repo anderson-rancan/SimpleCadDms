@@ -22,10 +22,7 @@ namespace SimpleCadDms.SolidWorks.Addin
         public const string AddinTitle = "SimpleCadDms";
         public const bool AddinLoadAtStartup = true;
 
-        private readonly int _userGroupId = 1;
-
-        private CommandManager _commandManager;
-        private BitmapHandler _bitmapHandler;
+        private CommandManagerHandler _commandManagerHandler;
 
         public ISldWorks SldWorks { get; private set; }
 
@@ -36,58 +33,17 @@ namespace SimpleCadDms.SolidWorks.Addin
             SldWorks = (ISldWorks)thisSW;
             ID = cookie;
 
-            SldWorks.SetAddinCallbackInfo(0, this, ID);
-
-            SetupCommandManager();
+            _commandManagerHandler = new CommandManagerHandler(SldWorks, ID);
+            _commandManagerHandler.Setup();
 
             return true;
         }
 
         public bool DisconnectFromSW()
         {
-            DisposeCommandManager();
+            _commandManagerHandler.Dispose();
 
             return true;
-        }
-
-        private void SetupCommandManager()
-        {
-            _commandManager = SldWorks.GetCommandManager(ID);
-            _bitmapHandler = new BitmapHandler();
-
-            var createCommandGroup2Errors = 0;
-            var cmdGroup = _commandManager.CreateCommandGroup2(_userGroupId, AddinTitle, AddinDescription, string.Empty, -1, false, ref createCommandGroup2Errors);
-
-            var _generateNewIdCmdId = 0;
-            var _saveWithNewIdCmdId = 1;
-            var _saveWithNewIdAndUploadCmdId = 2;
-            var _saveAndUploadToServerCmdId = 3;
-            var _downloadFromServerCmdId = 4;
-
-            var menuToolbarOption = (int)(swCommandItemType_e.swMenuItem | swCommandItemType_e.swToolbarItem);
-            cmdGroup.AddCommandItem2("NewId", -1, "Generates a new document ID", "Generates ID", 0, "GenerateNewId", "CommandAlwaysEnabled", _generateNewIdCmdId, menuToolbarOption);
-            cmdGroup.AddCommandItem2("SaveWithNewId", -1, "Saves the current document with a new ID", "Saves with a new ID", 0, "SaveWithNewId", "CommandAlwaysEnabled", _saveWithNewIdCmdId, menuToolbarOption);
-            cmdGroup.AddCommandItem2("SaveWithNewIdAndUpload", -1, "Saves the current document with a new ID and uploads it", "Saves with a new ID and upload", 0, "SaveWithNewIdAndUpload", "CommandAlwaysEnabled", _saveWithNewIdAndUploadCmdId, menuToolbarOption);
-            cmdGroup.AddSpacer2(-1, menuToolbarOption);
-            cmdGroup.AddCommandItem2("SaveAndUpload", -1, "Saves the current document and uploads it", "Saves and uploads the document", 0, "SaveAndUpload", "CommandAlwaysEnabled", _saveAndUploadToServerCmdId, menuToolbarOption);
-            cmdGroup.AddCommandItem2("DownloadFromServer", -1, "Downloads a document from the server", "Downloads a document", 0, "DownloadFromServer", "CommandAlwaysEnabled", _downloadFromServerCmdId, menuToolbarOption);
-
-            cmdGroup.HasToolbar = true;
-            cmdGroup.HasMenu = true;
-            cmdGroup.Activate();
-        }
-
-        private void DisposeCommandManager()
-        {
-            _commandManager.RemoveCommandGroup(_userGroupId);
-
-            Marshal.ReleaseComObject(_commandManager);
-            _commandManager = null;
-        }
-
-        public void HelloWorld()
-        {
-            System.Windows.Forms.MessageBox.Show("Hello world!");
         }
 
         [ComRegisterFunction]
