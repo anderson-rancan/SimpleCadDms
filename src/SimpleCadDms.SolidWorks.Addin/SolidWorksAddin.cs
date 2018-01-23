@@ -2,6 +2,7 @@
 using SolidWorks.Interop.swconst;
 using SolidWorks.Interop.swpublished;
 using SolidWorksTools;
+using SolidWorksTools.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,12 @@ namespace SimpleCadDms.SolidWorks.Addin
 
         private readonly int _userGroupId = 1;
 
+        private CommandManager _commandManager;
+        private BitmapHandler _bitmapHandler;
+
         public ISldWorks SldWorks { get; private set; }
+
         public int ID { get; private set; }
-        private CommandManager CommandManager { get; set; }
 
         public bool ConnectToSW(object thisSW, int cookie)
         {
@@ -48,30 +52,42 @@ namespace SimpleCadDms.SolidWorks.Addin
 
         private void SetupCommandManager()
         {
-            CommandManager = SldWorks.GetCommandManager(ID);
-
-            int[] docTypes = new int[]{(int)swDocumentTypes_e.swDocASSEMBLY,
-                                       (int)swDocumentTypes_e.swDocDRAWING,
-                                       (int)swDocumentTypes_e.swDocPART};
+            _commandManager = SldWorks.GetCommandManager(ID);
+            _bitmapHandler = new BitmapHandler();
 
             var createCommandGroup2Errors = 0;
-            var cmdGroup = CommandManager.CreateCommandGroup2(_userGroupId, AddinTitle, AddinDescription, string.Empty, -1, false, ref createCommandGroup2Errors);
+            var cmdGroup = _commandManager.CreateCommandGroup2(_userGroupId, AddinTitle, AddinDescription, string.Empty, -1, false, ref createCommandGroup2Errors);
 
-            cmdGroup.AddCommandItem2("HelloWorld", -1, "Our first command", "Our first command", 0, "HelloWorld", string.Empty, 0, (int)swCommandItemType_e.swMenuItem);
+            var _generateNewIdCmdId = 0;
+            var _saveWithNewIdCmdId = 1;
+            var _saveWithNewIdAndUploadCmdId = 2;
+            var _saveAndUploadToServerCmdId = 3;
+            var _downloadFromServerCmdId = 4;
 
+            var menuToolbarOption = (int)(swCommandItemType_e.swMenuItem | swCommandItemType_e.swToolbarItem);
+            cmdGroup.AddCommandItem2("NewId", -1, "Generates a new document ID", "Generates ID", 0, "GenerateNewId", "CommandAlwaysEnabled", _generateNewIdCmdId, menuToolbarOption);
+            cmdGroup.AddCommandItem2("SaveWithNewId", -1, "Saves the current document with a new ID", "Saves with a new ID", 0, "SaveWithNewId", "CommandAlwaysEnabled", _saveWithNewIdCmdId, menuToolbarOption);
+            cmdGroup.AddCommandItem2("SaveWithNewIdAndUpload", -1, "Saves the current document with a new ID and uploads it", "Saves with a new ID and upload", 0, "SaveWithNewIdAndUpload", "CommandAlwaysEnabled", _saveWithNewIdAndUploadCmdId, menuToolbarOption);
+            cmdGroup.AddSpacer2(-1, menuToolbarOption);
+            cmdGroup.AddCommandItem2("SaveAndUpload", -1, "Saves the current document and uploads it", "Saves and uploads the document", 0, "SaveAndUpload", "CommandAlwaysEnabled", _saveAndUploadToServerCmdId, menuToolbarOption);
+            cmdGroup.AddCommandItem2("DownloadFromServer", -1, "Downloads a document from the server", "Downloads a document", 0, "DownloadFromServer", "CommandAlwaysEnabled", _downloadFromServerCmdId, menuToolbarOption);
+
+            cmdGroup.HasToolbar = true;
             cmdGroup.HasMenu = true;
             cmdGroup.Activate();
         }
 
         private void DisposeCommandManager()
         {
-            CommandManager.RemoveCommandGroup(_userGroupId);
+            _commandManager.RemoveCommandGroup(_userGroupId);
+
+            Marshal.ReleaseComObject(_commandManager);
+            _commandManager = null;
         }
 
         public void HelloWorld()
         {
-            var form = new Form1();
-            form.ShowDialog();
+            System.Windows.Forms.MessageBox.Show("Hello world!");
         }
 
         [ComRegisterFunction]
@@ -79,24 +95,20 @@ namespace SimpleCadDms.SolidWorks.Addin
         {
             try
             {
-                Microsoft.Win32.RegistryKey hklm = Microsoft.Win32.Registry.LocalMachine;
-                Microsoft.Win32.RegistryKey hkcu = Microsoft.Win32.Registry.CurrentUser;
-
-                string keyname = "SOFTWARE\\SolidWorks\\Addins\\{" + type.GUID + "}";
-                Microsoft.Win32.RegistryKey addinkey = hklm.CreateSubKey(keyname);
+                string keyname = "SOFTWARE\\SolidWorks\\Addins\\{" + AddinGuid + "}";
+                Microsoft.Win32.RegistryKey addinkey = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(keyname);
                 addinkey.SetValue(null, 0);
 
                 addinkey.SetValue("Description", AddinDescription);
                 addinkey.SetValue("Title", AddinTitle);
 
-                keyname = "Software\\SolidWorks\\AddInsStartup\\{" + type.GUID + "}";
-                addinkey = hkcu.CreateSubKey(keyname);
+                keyname = "Software\\SolidWorks\\AddInsStartup\\{" + AddinGuid + "}";
+                addinkey = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(keyname);
                 addinkey.SetValue(null, Convert.ToInt32(AddinLoadAtStartup), Microsoft.Win32.RegistryValueKind.DWord);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine(e.Message);
-                System.Windows.Forms.MessageBox.Show("There was a problem registering the function: \n\"" + e.Message + "\"");
+                System.Windows.Forms.MessageBox.Show("There was a problem registering the function: \n\"" + ex + "\"");
             }
         }
 
@@ -105,19 +117,15 @@ namespace SimpleCadDms.SolidWorks.Addin
         {
             try
             {
-                Microsoft.Win32.RegistryKey hklm = Microsoft.Win32.Registry.LocalMachine;
-                Microsoft.Win32.RegistryKey hkcu = Microsoft.Win32.Registry.CurrentUser;
+                string keyname = "SOFTWARE\\SolidWorks\\Addins\\{" + AddinGuid + "}";
+                Microsoft.Win32.Registry.LocalMachine.DeleteSubKey(keyname);
 
-                string keyname = "SOFTWARE\\SolidWorks\\Addins\\{" + type.GUID + "}";
-                hklm.DeleteSubKey(keyname);
-
-                keyname = "Software\\SolidWorks\\AddInsStartup\\{" + type.GUID + "}";
-                hkcu.DeleteSubKey(keyname);
+                keyname = "Software\\SolidWorks\\AddInsStartup\\{" + AddinGuid + "}";
+                Microsoft.Win32.Registry.CurrentUser.DeleteSubKey(keyname);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("There was a problem unregistering this dll: " + e.Message);
-                System.Windows.Forms.MessageBox.Show("There was a problem unregistering this dll: \n\"" + e.Message + "\"");
+                System.Windows.Forms.MessageBox.Show("There was a problem unregistering this dll: \n\"" + ex + "\"");
             }
         }
     }
