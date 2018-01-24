@@ -9,5 +9,9 @@ namespace SimpleCadDms.Models
     public class DmsDocument
     {
         public string DocumentId { get; set; }
+
+        public string FileExtension { get; set; }
+
+        public byte[] FileContent { get; set; }
     }
 }

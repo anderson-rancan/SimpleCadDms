@@ -15,11 +15,14 @@ namespace SimpleCadDms.AutoCad.Addin
 {
     public class AddinCommands
     {
-        private const string _commandGenerateNewId = "scd_NewId";
-        private const string _commandSaveWithNewId = "scd_SaveWithNewId";
-        private const string _commandSaveWithNewIdAndUpload = "scd_SaveWithNewIdAndUpload";
-        private const string _commandSaveAndUploadToServer = "scd_SaveAndUpload";
-        private const string _commandDownloadFromServer = "scd_Download";
+        private const string _commandGenerateNewId = "ScdNewId";
+        private const string _lispGenerateNewId = "scd-newid";
+        private const string _commandSaveWithNewId = "ScdSaveWithNewId";
+        private const string _commandSaveWithNewIdAndUpload = "ScdSaveWithNewIdAndUpload";
+        private const string _commandDeleteDocument = "ScdDeleteDocument";
+        private const string _lispDeleteDocument = "scd-deletedocument";
+        private const string _commandSaveAndUploadToServer = "ScdSaveAndUpload";
+        private const string _commandDownloadFromServer = "ScdDownload";
 
         private ICadDms _cadDms;
 
@@ -33,37 +36,71 @@ namespace SimpleCadDms.AutoCad.Addin
         }
 
         [CommandMethod(_commandGenerateNewId)]
-        public void GenerateNewId()
+        public void GenerateNewIdCommand()
         {
-            var documentId = CommandHandlerFactory
-                .Instance
-                .GetNewDocumentIdHandler()
-                .CreateNewId();
-
-            WriteMessage(string.Format("The {0} document ID was successfully generated!", documentId));
+            WriteMessage(string.Format("The {0} document ID was successfully generated!", GenerateNewId()));
         }
 
-        [LispFunction("scd-newid")]
-        public ResultBuffer LispGenerateNewId(ResultBuffer incomingBuffer)
+        [LispFunction(_lispGenerateNewId)]
+        public ResultBuffer GenerateNewIdLisp(ResultBuffer incomingBuffer)
         {
-            var documentId = CommandHandlerFactory
-                .Instance
-                .GetNewDocumentIdHandler()
-                .CreateNewId();
-
-            return new ResultBuffer(new TypedValue((int)LispDataType.Text, documentId));
+            return new ResultBuffer(new TypedValue((int)LispDataType.Text, GenerateNewId()));
         }
 
         [CommandMethod(_commandSaveWithNewId)]
         public void SaveWithNewId()
         {
-            WriteMessage("This method will generate a new number and save the file");
+            CommandHandlerFactory
+                .Instance
+                .GetSaveWithNewIdHandler()
+                .SaveWithNewId();
         }
 
         [CommandMethod(_commandSaveWithNewIdAndUpload)]
         public void SaveWithNewIdAndUpload()
         {
-            WriteMessage("This method will generate a new number, save the file and upload it to the server");
+            CommandHandlerFactory
+                .Instance
+                .GetSaveWithNewIdAndUpload()
+                .SaveAndUpload();
+        }
+
+        [CommandMethod(_commandDeleteDocument)]
+        public void DeleteDocumentCommand()
+        {
+            CommandHandlerFactory
+                .Instance
+                .GetDeleteDocumentHandler()
+                .Delete();
+        }
+
+        [LispFunction(_lispDeleteDocument)]
+        public ResultBuffer DeleteDocumentLisp(ResultBuffer incomingBuffer)
+        {
+            var result = false;
+
+            var documentId = incomingBuffer
+                ?.AsArray()
+                .FirstOrDefault(_ => _.TypeCode == (short)LispDataType.Text)
+                .Value
+                ?.ToString();
+
+            if (!string.IsNullOrWhiteSpace(documentId))
+            {
+                result = CommandHandlerFactory
+                    .Instance
+                    .GetDeleteDocumentHandler()
+                    .Delete(documentId);
+            }
+            else
+            {
+                result = CommandHandlerFactory
+                    .Instance
+                    .GetDeleteDocumentHandler()
+                    .Delete();
+            }
+
+            return new ResultBuffer(new TypedValue(result ? (int)LispDataType.T_atom : (int)LispDataType.Nil));
         }
 
         [CommandMethod(_commandSaveAndUploadToServer)]
@@ -76,6 +113,14 @@ namespace SimpleCadDms.AutoCad.Addin
         public void DownloadFromServer()
         {
             WriteMessage("This method will download a file from the server");
+        }
+
+        private string GenerateNewId()
+        {
+            return CommandHandlerFactory
+                .Instance
+                .GetNewDocumentIdHandler()
+                .CreateNewId();
         }
 
         private void WriteMessage(string message)

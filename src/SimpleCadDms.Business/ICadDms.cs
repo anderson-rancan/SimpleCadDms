@@ -14,5 +14,7 @@ namespace SimpleCadDms.Business
         OperationResult DownloadDocument(string documentId);
 
         OperationResult UploadDocument(DmsDocument dmsDocument);
+
+        OperationResult DeleteDocument(string documentId);
     }
 }

@@ -27,5 +27,12 @@ namespace SimpleCadDms.Business
                 false,
                 "UploadDocument() was not implemented!");
         }
+
+        public OperationResult DeleteDocument(string documentId)
+        {
+            return new OperationResult(
+                false,
+                "DeleteDocument() was not implemented!");
+        }
     }
 }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Drawing;
@@ -11,28 +7,33 @@ using System.Drawing.Imaging;
 
 using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
 using Autodesk.AutoCAD.Runtime;
-using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.Windows;
 
 namespace SimpleCadDms.AutoCad.Addin.Ribbon
 {
     public class AddinRibbonExtensionApplication : IExtensionApplication
     {
+        private bool _created;
+
         public void Initialize()
         {
-            AcadApp.Idle += new EventHandler(Application_OnIdle);
+            AcadApp.Idle += AcadApp_Idle;
         }
 
         public void Terminate()
         {
-            
+            if (!_created)
+                AcadApp.Idle -= AcadApp_Idle;
         }
 
-        void Application_OnIdle(object sender, EventArgs e)
+        private void AcadApp_Idle(object sender, EventArgs e)
         {
-            AcadApp.Idle -= new EventHandler(Application_OnIdle);
+            if (_created) return;
 
+            AcadApp.Idle -= AcadApp_Idle;
             CreateRibbon();
+
+            _created = true;
         }
 
         private void CreateRibbon()
@@ -68,7 +69,7 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 ShowImage = true,
                 Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
                 LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
-                CommandHandler = new DummyButtonCommand()
+                CommandHandler = new SaveWithNewIdCommand()
             };
 
             var saveNewIdUploadButton = new RibbonButton
@@ -78,7 +79,7 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 ShowImage = true,
                 Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
                 LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
-                CommandHandler = new DummyButtonCommand()
+                CommandHandler = new SaveWithNewIdAndUploadCommand()
             };
 
             var deleteDocButton = new RibbonButton
@@ -88,7 +89,7 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 ShowImage = true,
                 Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
                 LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
-                CommandHandler = new DummyButtonCommand()
+                CommandHandler = new DeleteDocumentCommand()
             };
 
             var documentRibbonRow = new RibbonRowPanel();
@@ -115,7 +116,7 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
                 Size = RibbonItemSize.Large,
                 Orientation = Orientation.Vertical,
-                CommandHandler = new DummyButtonCommand()
+                //CommandHandler = new DummyButtonCommand() // TODO
             };
 
             var downloadButton = new RibbonButton
@@ -127,7 +128,7 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
                 Size = RibbonItemSize.Large,
                 Orientation = Orientation.Vertical,
-                CommandHandler = new DummyButtonCommand()
+                //CommandHandler = new DummyButtonCommand() // TODO
             };
 
             transferPanelSource.Items.Add(uploadButton);
