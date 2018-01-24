@@ -14,7 +14,7 @@ using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.Windows;
 
-namespace SimpleCadDms.AutoCad.Addin
+namespace SimpleCadDms.AutoCad.Addin.Ribbon
 {
     public class AddinRibbonExtensionApplication : IExtensionApplication
     {
@@ -58,7 +58,7 @@ namespace SimpleCadDms.AutoCad.Addin
                 LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
                 Orientation = Orientation.Vertical,
                 Size = RibbonItemSize.Large,
-                CommandHandler = new DummyButtonCommand()
+                CommandHandler = new GenerateNewIdCommand()
             };
 
             var saveNewIdButton = new RibbonButton

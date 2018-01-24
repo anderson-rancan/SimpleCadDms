@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
 using Autodesk.AutoCAD.Runtime;
+using SimpleCadDms.Business;
+using SimpleCadDms.AutoCad.Addin.CommandHandlers;
 
 namespace SimpleCadDms.AutoCad.Addin
 {
@@ -18,10 +20,26 @@ namespace SimpleCadDms.AutoCad.Addin
         private const string _commandSaveAndUploadToServer = "scd_SaveAndUpload";
         private const string _commandDownloadFromServer = "scd_Download";
 
+        private ICadDms _cadDms;
+
+        private ICadDms CadDms
+        {
+            get
+            {
+                if (_cadDms == null) _cadDms = CadDmsFactory.CreateNew();
+                return _cadDms;
+            }
+        }
+
         [CommandMethod(_commandGenerateNewId)]
         public void GenerateNewId()
         {
-            WriteMessage("This method will generate a new number");
+            var documentId = CommandHandlerFactory
+                .Instance
+                .GetNewDocumentIdHandler()
+                .CreateNewId();
+
+            WriteMessage(string.Format("The {0} document ID was successfully generated!", documentId));
         }
 
         [CommandMethod(_commandSaveWithNewId)]

@@ -4,7 +4,7 @@ using System.Windows.Input;
 using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
 using Autodesk.Windows;
 
-namespace SimpleCadDms.AutoCad.Addin
+namespace SimpleCadDms.AutoCad.Addin.Ribbon
 {
     internal class DummyButtonCommand : ICommand
     {
