@@ -1,8 +1,7 @@
 ﻿using SimpleCadDms.AutoCad.Addin.CommandHandlers;
 using System;
+using System.Windows;
 using System.Windows.Input;
-
-using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
 
 namespace SimpleCadDms.AutoCad.Addin.Ribbon
 {
@@ -22,8 +21,13 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 .GetNewDocumentIdHandler()
                 .CreateNewId();
 
-            var doc = AcadApp.DocumentManager.MdiActiveDocument;
-            doc.Editor.WriteMessage(string.Format("{0}The {1} document ID was successfully generated!{0}", Environment.NewLine, documentId));
+            Clipboard.SetText(documentId);
+
+            MessageBox.Show(
+                string.Format("The {0} document ID was generated and copied to the clipboard.", documentId),
+                "New Document ID",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
     }
 }

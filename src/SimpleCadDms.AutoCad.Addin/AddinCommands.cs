@@ -9,6 +9,7 @@ using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
 using Autodesk.AutoCAD.Runtime;
 using SimpleCadDms.Business;
 using SimpleCadDms.AutoCad.Addin.CommandHandlers;
+using Autodesk.AutoCAD.DatabaseServices;
 
 namespace SimpleCadDms.AutoCad.Addin
 {
@@ -42,6 +43,17 @@ namespace SimpleCadDms.AutoCad.Addin
             WriteMessage(string.Format("The {0} document ID was successfully generated!", documentId));
         }
 
+        [LispFunction("scd-newid")]
+        public ResultBuffer LispGenerateNewId(ResultBuffer incomingBuffer)
+        {
+            var documentId = CommandHandlerFactory
+                .Instance
+                .GetNewDocumentIdHandler()
+                .CreateNewId();
+
+            return new ResultBuffer(new TypedValue((int)LispDataType.Text, documentId));
+        }
+
         [CommandMethod(_commandSaveWithNewId)]
         public void SaveWithNewId()
         {
@@ -72,7 +84,7 @@ namespace SimpleCadDms.AutoCad.Addin
                 .DocumentManager
                 .MdiActiveDocument
                 .Editor
-                .WriteMessage(message + Environment.NewLine);
+                .WriteMessage(string.Format("{0}{1}{0}", Environment.NewLine, message));
         }
     }
 }
