@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
-using System.Drawing;
-using System.IO;
-using System.Drawing.Imaging;
 
 using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
 using Autodesk.AutoCAD.Runtime;
@@ -55,8 +51,8 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 Text = "Get new ID",
                 ShowText = true,
                 ShowImage = true,
-                Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
-                LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
+                Image = ImageSourceHelper.GetBitmap(Properties.Resources.newid_16),
+                LargeImage = ImageSourceHelper.GetBitmap(Properties.Resources.newid_32),
                 Orientation = Orientation.Vertical,
                 Size = RibbonItemSize.Large,
                 CommandHandler = new GenerateNewIdCommand()
@@ -67,8 +63,8 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 Text = "Save with new ID",
                 ShowText = true,
                 ShowImage = true,
-                Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
-                LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
+                Image = ImageSourceHelper.GetBitmap(Properties.Resources.savenewid_16),
+                LargeImage = ImageSourceHelper.GetBitmap(Properties.Resources.savenewid_32),
                 CommandHandler = new SaveWithNewIdCommand()
             };
 
@@ -77,8 +73,8 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 Text = "Save with new ID and upload",
                 ShowText = true,
                 ShowImage = true,
-                Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
-                LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
+                Image = ImageSourceHelper.GetBitmap(Properties.Resources.savenewid_16),
+                LargeImage = ImageSourceHelper.GetBitmap(Properties.Resources.savenewid_32),
                 CommandHandler = new SaveWithNewIdAndUploadCommand()
             };
 
@@ -87,8 +83,8 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 Text = "Delete document",
                 ShowText = true,
                 ShowImage = true,
-                Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
-                LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
+                Image = ImageSourceHelper.GetBitmap(Properties.Resources.file_delete_16),
+                LargeImage = ImageSourceHelper.GetBitmap(Properties.Resources.file_delete_32),
                 CommandHandler = new DeleteDocumentCommand()
             };
 
@@ -112,11 +108,11 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 Text = "Upload",
                 ShowText = true,
                 ShowImage = true,
-                Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
-                LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
+                Image = ImageSourceHelper.GetBitmap(Properties.Resources.upload_16),
+                LargeImage = ImageSourceHelper.GetBitmap(Properties.Resources.upload_32),
                 Size = RibbonItemSize.Large,
                 Orientation = Orientation.Vertical,
-                //CommandHandler = new DummyButtonCommand() // TODO
+                CommandHandler = new UploadCommand()
             };
 
             var downloadButton = new RibbonButton
@@ -124,30 +120,15 @@ namespace SimpleCadDms.AutoCad.Addin.Ribbon
                 Text = "Download",
                 ShowText = true,
                 ShowImage = true,
-                Image = Images.getBitmap(Properties.Resources.icons8_starbucks_16),
-                LargeImage = Images.getBitmap(Properties.Resources.icons8_starbucks_32),
+                Image = ImageSourceHelper.GetBitmap(Properties.Resources.download_16),
+                LargeImage = ImageSourceHelper.GetBitmap(Properties.Resources.download_32),
                 Size = RibbonItemSize.Large,
                 Orientation = Orientation.Vertical,
-                //CommandHandler = new DummyButtonCommand() // TODO
+                CommandHandler = new DownloadCommand()
             };
 
             transferPanelSource.Items.Add(uploadButton);
             transferPanelSource.Items.Add(downloadButton);
-        }
-    }
-
-    public class Images
-    {
-        public static BitmapImage getBitmap(Bitmap image)
-        {
-            MemoryStream stream = new MemoryStream();
-            image.Save(stream, ImageFormat.Png);
-            BitmapImage bmp = new BitmapImage();
-            bmp.BeginInit();
-            bmp.StreamSource = stream;
-            bmp.EndInit();
-
-            return bmp;
         }
     }
 }

@@ -118,10 +118,37 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="icons8_starbucks_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\inc\icons8-starbucks-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="download_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\download-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="icons8_starbucks_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\inc\icons8-starbucks-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="download_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\download-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="file_delete_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\file-delete-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="file_delete_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\file-delete-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="newid_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\newid-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="newid_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\newid-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="question_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\question-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="savenewid_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\savenewid-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="savenewid_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\savenewid-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="upload_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\upload-16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="upload_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\inc\upload-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

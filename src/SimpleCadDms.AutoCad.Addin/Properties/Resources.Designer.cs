@@ -63,9 +63,9 @@ namespace SimpleCadDms.AutoCad.Addin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap icons8_starbucks_16 {
+        internal static System.Drawing.Bitmap download_16 {
             get {
-                object obj = ResourceManager.GetObject("icons8_starbucks_16", resourceCulture);
+                object obj = ResourceManager.GetObject("download_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,99 @@ namespace SimpleCadDms.AutoCad.Addin.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap icons8_starbucks_32 {
+        internal static System.Drawing.Bitmap download_32 {
             get {
-                object obj = ResourceManager.GetObject("icons8_starbucks_32", resourceCulture);
+                object obj = ResourceManager.GetObject("download_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap file_delete_16 {
+            get {
+                object obj = ResourceManager.GetObject("file_delete_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap file_delete_32 {
+            get {
+                object obj = ResourceManager.GetObject("file_delete_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap newid_16 {
+            get {
+                object obj = ResourceManager.GetObject("newid_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap newid_32 {
+            get {
+                object obj = ResourceManager.GetObject("newid_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap question_32 {
+            get {
+                object obj = ResourceManager.GetObject("question_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap savenewid_16 {
+            get {
+                object obj = ResourceManager.GetObject("savenewid_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap savenewid_32 {
+            get {
+                object obj = ResourceManager.GetObject("savenewid_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap upload_16 {
+            get {
+                object obj = ResourceManager.GetObject("upload_16", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap upload_32 {
+            get {
+                object obj = ResourceManager.GetObject("upload_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

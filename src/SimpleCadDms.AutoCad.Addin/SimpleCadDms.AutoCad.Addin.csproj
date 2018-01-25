@@ -68,6 +68,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -86,6 +87,9 @@
     <Compile Include="CommandHandlers\SaveWithNewIdAndUploadHandler.cs" />
     <Compile Include="CommandHandlers\SaveWithNewIdHandler.cs" />
     <Compile Include="CommandHandlers\UploadHandler.cs" />
+    <Compile Include="CommandHandlers\UserInterface\UserInputWindow.xaml.cs">
+      <DependentUpon>UserInputWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DocumentProperties.cs" />
     <Compile Include="Ribbon\AddinRibbonExtensionApplication.cs" />
     <Compile Include="AddinRegistration.cs" />
@@ -97,21 +101,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Ribbon\DownloadCommand.cs" />
     <Compile Include="Ribbon\GenerateNewIdCommand.cs" />
+    <Compile Include="Ribbon\ImageSourceHelper.cs" />
     <Compile Include="Ribbon\SaveWithNewIdAndUploadCommand.cs" />
     <Compile Include="Ribbon\SaveWithNewIdCommand.cs" />
+    <Compile Include="Ribbon\UploadCommand.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="inc\icons8-starbucks-16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="inc\icons8-starbucks-32.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SimpleCadDms.Business\SimpleCadDms.Business.csproj">
@@ -122,6 +123,45 @@
       <Project>{558875f2-dede-4b0e-a65d-5dd7dae36977}</Project>
       <Name>SimpleCadDms.Models</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\download-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\download-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\file-delete-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\file-delete-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\newid-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\newid-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\savenewid-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\savenewid-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\upload-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="inc\upload-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="CommandHandlers\UserInterface\UserInputWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="inc\question-32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

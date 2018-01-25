@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 using AcadApp = Autodesk.AutoCAD.ApplicationServices.Application;
 using Autodesk.AutoCAD.Runtime;
 using SimpleCadDms.Business;
 using SimpleCadDms.AutoCad.Addin.CommandHandlers;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.EditorInput;
 
 namespace SimpleCadDms.AutoCad.Addin
 {
@@ -38,7 +35,11 @@ namespace SimpleCadDms.AutoCad.Addin
         [CommandMethod(_commandGenerateNewId)]
         public void GenerateNewIdCommand()
         {
-            WriteMessage(string.Format("The {0} document ID was successfully generated!", GenerateNewId()));
+            AcadApp
+                .DocumentManager
+                .MdiActiveDocument
+                .Editor
+                .WriteMessage(string.Format("{0}The {1} document ID was successfully generated!{0}", Environment.NewLine, GenerateNewId()));
         }
 
         [LispFunction(_lispGenerateNewId)]
@@ -106,13 +107,27 @@ namespace SimpleCadDms.AutoCad.Addin
         [CommandMethod(_commandSaveAndUploadToServer)]
         public void SaveAndUploadToServer()
         {
-            WriteMessage("This method will save the file and upload it to the server");
+            CommandHandlerFactory
+                .Instance
+                .GetUploadHandler()
+                .Upload();
         }
 
         [CommandMethod(_commandDownloadFromServer)]
         public void DownloadFromServer()
         {
-            WriteMessage("This method will download a file from the server");
+            var document = AcadApp.DocumentManager.MdiActiveDocument;
+
+            var options = new PromptStringOptions(string.Format("{0}Enter document ID: ", Environment.NewLine));
+            var result = document.Editor.GetString(options);
+
+            if (!string.IsNullOrWhiteSpace(result.StringResult))
+            {
+                CommandHandlerFactory
+                    .Instance
+                    .GetDownloadHandler()
+                    .Download(result.StringResult);
+            }
         }
 
         private string GenerateNewId()
@@ -121,15 +136,6 @@ namespace SimpleCadDms.AutoCad.Addin
                 .Instance
                 .GetNewDocumentIdHandler()
                 .CreateNewId();
-        }
-
-        private void WriteMessage(string message)
-        {
-            AcadApp
-                .DocumentManager
-                .MdiActiveDocument
-                .Editor
-                .WriteMessage(string.Format("{0}{1}{0}", Environment.NewLine, message));
         }
     }
 }
