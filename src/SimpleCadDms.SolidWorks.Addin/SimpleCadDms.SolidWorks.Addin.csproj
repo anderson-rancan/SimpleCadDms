@@ -98,5 +98,10 @@
       <Name>SimpleCadDms.Models</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\MainIconList_20.png" />
+    <EmbeddedResource Include="Images\MainIconList_32.png" />
+    <EmbeddedResource Include="Images\MainIconList_40.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

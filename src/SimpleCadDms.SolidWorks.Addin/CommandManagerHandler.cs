@@ -1,11 +1,14 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using SimpleCadDms.Business;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using SolidWorksTools.File;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace SimpleCadDms.SolidWorks.Addin
 {
@@ -16,6 +19,7 @@ namespace SimpleCadDms.SolidWorks.Addin
         private CommandManager _commandManager;
         private BitmapHandler _bitmapHandler;
         private bool _disposed;
+        private ICadDms _cadDms;
 
         private readonly int _userGroupId = 1;
         private readonly int _generateNewIdCmdId = 0;
@@ -42,6 +46,15 @@ namespace SimpleCadDms.SolidWorks.Addin
             {
                 if (_bitmapHandler == null) _bitmapHandler = new BitmapHandler();
                 return _bitmapHandler;
+            }
+        }
+
+        private ICadDms CadDms
+        {
+            get
+            {
+                if (_cadDms == null) _cadDms = CadDmsFactory.CreateNew();
+                return _cadDms;
             }
         }
 
@@ -91,8 +104,13 @@ namespace SimpleCadDms.SolidWorks.Addin
             icons[1] = BitmapHandler.CreateFileFromResourceBitmap("SimpleCadDms.SolidWorks.Addin.Images.IconList_32.png", Assembly.GetExecutingAssembly());
             icons[2] = BitmapHandler.CreateFileFromResourceBitmap("SimpleCadDms.SolidWorks.Addin.Images.IconList_40.png", Assembly.GetExecutingAssembly());
 
+            var mainIcons = new string[3];
+            mainIcons[0] = BitmapHandler.CreateFileFromResourceBitmap("SimpleCadDms.SolidWorks.Addin.Images.MainIconList_20.png", Assembly.GetExecutingAssembly());
+            mainIcons[1] = BitmapHandler.CreateFileFromResourceBitmap("SimpleCadDms.SolidWorks.Addin.Images.MainIconList_32.png", Assembly.GetExecutingAssembly());
+            mainIcons[2] = BitmapHandler.CreateFileFromResourceBitmap("SimpleCadDms.SolidWorks.Addin.Images.MainIconList_40.png", Assembly.GetExecutingAssembly());
+
             commandGroup.IconList = icons;
-            commandGroup.MainIconList = icons;
+            commandGroup.MainIconList = mainIcons;
 
             commandsDictionary = new Dictionary<int, int>();
             var menuToolbarOption = (int)(swCommandItemType_e.swMenuItem | swCommandItemType_e.swToolbarItem);
@@ -172,7 +190,7 @@ namespace SimpleCadDms.SolidWorks.Addin
                 _lastItemIndex,
                 "Generates a new document ID",
                 "Generates ID",
-                0,
+                3,
                 nameof(GenerateNewId),
                 nameof(CommandAlwaysEnabled),
                 _generateNewIdCmdId,
@@ -186,7 +204,7 @@ namespace SimpleCadDms.SolidWorks.Addin
                 _lastItemIndex,
                "Saves the current document with a new ID",
                "Saves with a new ID",
-               0,
+               5,
                nameof(SaveWithNewId),
                nameof(CommandAlwaysEnabled),
                _saveWithNewIdCmdId,
@@ -200,7 +218,7 @@ namespace SimpleCadDms.SolidWorks.Addin
                 _lastItemIndex,
                 "Saves the current document with a new ID and uploads it",
                 "Saves with a new ID and upload",
-                0,
+                5,
                 nameof(SaveWithNewIdAndUpload),
                 nameof(CommandAlwaysEnabled),
                 _saveWithNewIdAndUploadCmdId,
@@ -214,7 +232,7 @@ namespace SimpleCadDms.SolidWorks.Addin
                 _lastItemIndex,
                "Deletes a document",
                "Deletes a document",
-               0,
+               2,
                nameof(DeleteDocument),
                nameof(CommandAlwaysEnabled),
                _deleteDocument,
@@ -228,7 +246,7 @@ namespace SimpleCadDms.SolidWorks.Addin
                 _lastItemIndex,
                 "Saves the current document and uploads it",
                 "Saves and uploads the document",
-                0,
+                6,
                 nameof(SaveAndUpload),
                 nameof(CommandAlwaysEnabled),
                 _saveAndUploadToServerCmdId,
@@ -242,7 +260,7 @@ namespace SimpleCadDms.SolidWorks.Addin
                 _lastItemIndex,
                "Downloads a document from the server",
                "Downloads a document",
-               0,
+               1,
                nameof(DownloadFromServer),
                nameof(CommandAlwaysEnabled),
                _downloadFromServerCmdId,
@@ -256,32 +274,87 @@ namespace SimpleCadDms.SolidWorks.Addin
 
         public void GenerateNewId()
         {
-            System.Windows.Forms.MessageBox.Show("Generate new ID");
+            var documentId = CadDms.CreateNewDocumentId();
+
+            Clipboard.SetText(documentId);
+
+            MessageBox.Show(
+                string.Format("The {0} document ID was generated and copied to the clipboard.", documentId),
+                "New Document ID",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
 
         public void SaveWithNewId()
         {
-            System.Windows.Forms.MessageBox.Show("Save with new ID");
+            if (_sldWorks.ActiveDoc is IModelDoc2 activeDoc)
+            {
+                var dependencies = activeDoc.GetDependencies2(true, true, false) as string[];
+
+                for (int counter = 1; counter < dependencies.Length; counter += 2)
+                {
+                    var filename = dependencies[counter];
+
+                    var openDoc6Errors = 0;
+                    var openDoc6Warnings = 0;
+                    var document = _sldWorks.OpenDoc6(
+                        filename,
+                        (int)GetDocumentType(filename),
+                        (int)swOpenDocOptions_e.swOpenDocOptions_Silent,
+                        string.Empty,
+                        ref openDoc6Errors,
+                        ref openDoc6Warnings);
+
+                    var depSaveAsErrors = 0;
+                    var depSaveAsWarnings = 0;
+                    document.Extension.SaveAs(
+                        Path.Combine(Path.GetDirectoryName(filename), CadDms.CreateNewDocumentId() + Path.GetExtension(filename)),
+                        (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
+                        (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
+                        null,
+                        ref depSaveAsErrors,
+                        ref depSaveAsWarnings);
+                }
+
+                var saveAsErrors = 0;
+                var saveAsWarnings = 0;
+                activeDoc.Extension.SaveAs(
+                    Path.Combine(Path.GetDirectoryName(activeDoc.GetPathName()), CadDms.CreateNewDocumentId() + Path.GetExtension(activeDoc.GetPathName())),
+                    (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
+                    (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
+                    null,
+                    ref saveAsErrors,
+                    ref saveAsWarnings);
+            }
         }
 
         public void SaveWithNewIdAndUpload()
         {
-            System.Windows.Forms.MessageBox.Show("Save with new ID and upload");
+            MessageBox.Show("Save with new ID and upload");
         }
 
         public void DeleteDocument()
         {
-            System.Windows.Forms.MessageBox.Show("Deletes a document");
+            MessageBox.Show("Deletes a document");
         }
 
         public void SaveAndUpload()
         {
-            System.Windows.Forms.MessageBox.Show("Save and upload");
+            MessageBox.Show("Save and upload");
         }
 
         public void DownloadFromServer()
         {
-            System.Windows.Forms.MessageBox.Show("Download from server");
+            MessageBox.Show("Download from server");
+        }
+
+        private swDocumentTypes_e GetDocumentType(string filename)
+        {
+            if (filename.EndsWith(".SLDPRT")) return swDocumentTypes_e.swDocPART;
+            if (filename.EndsWith(".SLDASM")) return swDocumentTypes_e.swDocASSEMBLY;
+            if (filename.EndsWith(".SLDDRW")) return swDocumentTypes_e.swDocDRAWING;
+
+            return swDocumentTypes_e.swDocNONE;
         }
 
         public void Dispose()
