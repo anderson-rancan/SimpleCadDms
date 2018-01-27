@@ -205,7 +205,7 @@ namespace SimpleCadDms.SolidWorks.Addin
                "Saves the current document with a new ID",
                "Saves with a new ID",
                5,
-               nameof(SaveWithNewId),
+               nameof(SaveWithNewIdCommand),
                nameof(CommandAlwaysEnabled),
                _saveWithNewIdCmdId,
                (int)(swCommandItemType_e.swMenuItem | swCommandItemType_e.swToolbarItem));
@@ -285,67 +285,30 @@ namespace SimpleCadDms.SolidWorks.Addin
                 MessageBoxIcon.Information);
         }
 
-        public void SaveWithNewId()
+        public void SaveWithNewIdCommand()
         {
-            if (_sldWorks.ActiveDoc is IModelDoc2 activeDoc)
-            {
-                var dependencies = activeDoc.GetDependencies2(true, true, false) as string[];
-
-                for (int counter = 1; counter < dependencies.Length; counter += 2)
-                {
-                    var filename = dependencies[counter];
-
-                    var openDoc6Errors = 0;
-                    var openDoc6Warnings = 0;
-                    var document = _sldWorks.OpenDoc6(
-                        filename,
-                        (int)GetDocumentType(filename),
-                        (int)swOpenDocOptions_e.swOpenDocOptions_Silent,
-                        string.Empty,
-                        ref openDoc6Errors,
-                        ref openDoc6Warnings);
-
-                    var depSaveAsErrors = 0;
-                    var depSaveAsWarnings = 0;
-                    document.Extension.SaveAs(
-                        Path.Combine(Path.GetDirectoryName(filename), CadDms.CreateNewDocumentId() + Path.GetExtension(filename)),
-                        (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
-                        (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
-                        null,
-                        ref depSaveAsErrors,
-                        ref depSaveAsWarnings);
-                }
-
-                var saveAsErrors = 0;
-                var saveAsWarnings = 0;
-                activeDoc.Extension.SaveAs(
-                    Path.Combine(Path.GetDirectoryName(activeDoc.GetPathName()), CadDms.CreateNewDocumentId() + Path.GetExtension(activeDoc.GetPathName())),
-                    (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
-                    (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
-                    null,
-                    ref saveAsErrors,
-                    ref saveAsWarnings);
-            }
+            SaveWithNewId();
         }
 
         public void SaveWithNewIdAndUpload()
         {
-            MessageBox.Show("Save with new ID and upload");
+            SaveWithNewId();
+            Upload(false);
         }
 
         public void DeleteDocument()
         {
-            MessageBox.Show("Deletes a document");
+            MessageBox.Show("Deletes a document"); // TODO
         }
 
         public void SaveAndUpload()
         {
-            MessageBox.Show("Save and upload");
+            Upload(true);
         }
 
         public void DownloadFromServer()
         {
-            MessageBox.Show("Download from server");
+            MessageBox.Show("Download from server"); // TODO
         }
 
         private swDocumentTypes_e GetDocumentType(string filename)
@@ -355,6 +318,80 @@ namespace SimpleCadDms.SolidWorks.Addin
             if (filename.EndsWith(".SLDDRW")) return swDocumentTypes_e.swDocDRAWING;
 
             return swDocumentTypes_e.swDocNONE;
+        }
+
+        private void SaveWithNewId()
+        {
+            if (_sldWorks.ActiveDoc is IModelDoc2 activeDoc)
+            {
+                if (!SaveAs(activeDoc, CadDms.CreateNewDocumentId())) return;
+
+                var dependencies = activeDoc.GetDependencies2(true, true, false) as string[];
+
+                for (int counter = 1; counter < dependencies.Length; counter += 2)
+                {
+                    var filename = dependencies[counter];
+
+                    var document = Open(filename);
+                    if (document == null) continue;
+
+                    var newDocumentId = CadDms.CreateNewDocumentId();
+                    if (!SaveAs(document, newDocumentId)) return;
+
+                    var drawing = Open(Path.Combine(Path.GetDirectoryName(filename), Path.GetFileNameWithoutExtension(filename) + ".SLDPRT"));
+                    if (drawing == null) continue;
+
+                    if (!SaveAs(drawing, newDocumentId)) return;
+                }
+            }
+        }
+
+        private IModelDoc2 Open(string fullpath)
+        {
+            var errors = 0;
+            var warnings = 0;
+
+            return _sldWorks.OpenDoc6(
+                fullpath,
+                (int)GetDocumentType(fullpath),
+                (int)swOpenDocOptions_e.swOpenDocOptions_Silent,
+                string.Empty,
+                ref errors,
+                ref warnings);
+        }
+
+        private bool SaveAs(IModelDoc2 modelDoc, string newFilename)
+        {
+            var currentPath = modelDoc.GetPathName();
+            var errors = 0;
+            var warnings = 0;
+
+            var result = modelDoc.Extension.SaveAs(
+                Path.Combine(Path.GetDirectoryName(currentPath), newFilename + Path.GetExtension(currentPath)),
+                (int)swSaveAsVersion_e.swSaveAsCurrentVersion,
+                (int)swSaveAsOptions_e.swSaveAsOptions_Silent,
+                null,
+                ref errors,
+                ref warnings);
+
+            if (!result)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "It was not possible to save the file, details are:{0}- Errors: {1}{0}- Warnings: {2}",
+                        System.Environment.NewLine,
+                        (swFileSaveError_e)errors,
+                        (swFileSaveWarning_e)warnings),
+                    "Save as",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            return result;
+        }
+
+        private void Upload(bool saveFirst)
+        {
+
         }
 
         public void Dispose()
